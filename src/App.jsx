@@ -13,7 +13,7 @@ function App() {
   const {
     city,
     setCity,
-    selectedCategory,
+    selectedCategory: selectedCategoryIndex,
     setSelectedCategory,
     radius,
     setRadius,
@@ -25,7 +25,7 @@ function App() {
     handleSearch,
   } = useSearch();
 
-  const selectedCategoryOption = CATEGORIES[selectedCategory] || { label: 'Places' };
+  const selectedCategory = CATEGORIES[selectedCategoryIndex] || { label: 'Places' };
 
   return (
     <div className="app-shell">
@@ -42,7 +42,7 @@ function App() {
           statusMessage={statusMessage}
           errorMessage={errorMessage}
           categories={CATEGORIES}
-          selectedCategory={selectedCategory}
+          selectedCategory={selectedCategoryIndex}
           onCategorySelect={setSelectedCategory}
         />
 
@@ -51,14 +51,10 @@ function App() {
             <ExportBar
               results={results}
               city={city}
-              categoryLabel={selectedCategoryOption.label}
-              onExport={() => exportToExcel(results, city, selectedCategoryOption.label)}
+              categoryLabel={selectedCategory.label}
+              onExport={() => exportToExcel(results, city, selectedCategory.label)}
             />
-            <ResultsTable
-              results={results}
-              city={city}
-              categoryLabel={selectedCategoryOption.label}
-            />
+            <ResultsTable results={results} city={city} categoryLabel={selectedCategory.label} />
           </>
         ) : (
           <EmptyState searchDone={searchDone} />
