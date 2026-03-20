@@ -13,6 +13,7 @@ export function CategoryPicker({ categories, selectedIndex, onSelect }) {
               key={category.label}
               type="button"
               onClick={() => onSelect(index)}
+              aria-pressed={isSelected}
               className={`rounded-full border px-4 py-2 text-sm font-medium transition duration-200 hover:brightness-110 ${
                 isSelected
                   ? 'border-[#00ff88] bg-[rgba(0,255,136,0.1)] text-[#00ff88]'

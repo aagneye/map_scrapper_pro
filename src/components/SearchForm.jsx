@@ -35,6 +35,7 @@ export function SearchForm({
             <input
               type="text"
               value={city}
+              aria-label="City name"
               placeholder="e.g. Amsterdam, Tokyo, Mumbai..."
               onChange={(event) => onCityChange(event.target.value)}
               onKeyDown={(event) => {
@@ -52,6 +53,7 @@ export function SearchForm({
             </span>
             <select
               value={radius}
+              aria-label="Search radius"
               onChange={(event) => onRadiusChange(Number(event.target.value))}
               className="w-full rounded-2xl border border-[#1f2937] bg-[#0d1117] px-4 py-3 text-base text-[#e2e8f0] outline-none transition focus:border-[#00ff88] focus:ring-2 focus:ring-[#00ff88]"
             >
@@ -68,6 +70,7 @@ export function SearchForm({
           type="button"
           onClick={onSearch}
           disabled={loading}
+          aria-busy={loading}
           className={`w-full rounded-2xl px-6 py-4 text-base font-semibold text-[#04130d] transition duration-200 ${
             loading
               ? 'cursor-not-allowed bg-[#334155] text-[#94a3b8] shadow-none'
