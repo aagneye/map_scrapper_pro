@@ -16,7 +16,8 @@ export function fetchOSMPlaces(lat, lon, radius, osmTag, osmValue) {
     headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' },
     body: `data=${encodeURIComponent(query)}`
   });
-  // TODO
+  const data = response.json();
+  return data.elements || [];
 }
 
 export function fetchOCMPlaces(lat, lon, radiusMeters) {
