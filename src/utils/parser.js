@@ -1,60 +1,67 @@
-// Parser utilities for PlaceMapper Pro
+function formatAddress(parts) {
+  return parts.filter(Boolean).join(', ') || 'N/A';
+}
 
 export function parseOSMResults(elements, categoryLabel) {
-  return elements.map(el => {
-    const tags = el.tags || {};
-    const addressParts = [
-      tags['addr:housenumber'],
-      tags['addr:street'],
-      tags['addr:city'],
-      tags['addr:country']
-    ].filter(Boolean);
+  return elements.map((element) => {
+    const tags = element.tags || {};
+
     return {
       name: tags.name || tags['name:en'] || 'Unnamed',
-      address: addressParts.join(', '),
-      lat: el.lat || el.center?.lat || '',
-      lon: el.lon || el.center?.lon || '',
+      address: formatAddress([
+        tags['addr:housenumber'],
+        tags['addr:street'],
+        tags['addr:city'],
+        tags['addr:country'],
+      ]),
+      lat: element.lat || element.center?.lat || 'N/A',
+      lon: element.lon || element.center?.lon || 'N/A',
       phone: tags.phone || tags['contact:phone'] || 'N/A',
       website: tags.website || tags['contact:website'] || 'N/A',
       rating: 'N/A',
       reviews: 'N/A',
       ports: tags.capacity || 'N/A',
-      connector_types: 'N/A',
-      opening_hours: tags.opening_hours || 'N/A',
+      connectors: 'N/A',
+      hours: tags.opening_hours || 'N/A',
       category: categoryLabel,
-      source: 'OpenStreetMap'
+      source: 'OpenStreetMap',
     };
   });
 }
 
-export function parseOCMResults(items) {
-  return items.map(item => {
+export function parseOCMResults(items, categoryLabel) {
+  return items.map((item) => {
     const info = item.AddressInfo || {};
     const comments = Array.isArray(item.UserComments) ? item.UserComments : [];
     const connections = Array.isArray(item.Connections) ? item.Connections : [];
-    const addressParts = [
-      info.AddressLine1,
-      info.Town,
-      info.StateOrProvince,
-      info.Country?.Title
-    ].filter(Boolean);
-    const ratings = comments.map(c => Number(c.Rating || 0)).filter(r => r > 0);
-    const avgRating = ratings.length > 0 ? (ratings.reduce((a, b) => a + b, 0) / ratings.length).toFixed(1) : 'N/A';
-    const connectorTypes = [...new Set(connections.map(c => c.ConnectionType?.Title).filter(Boolean))].join(', ');
+    const ratings = comments
+      .map((comment) => Number(comment.Rating || 0))
+      .filter((rating) => rating > 0);
+
     return {
       name: info.Title || 'Unnamed',
-      address: addressParts.join(', '),
-      lat: info.Latitude || '',
-      lon: info.Longitude || '',
+      address: formatAddress([
+        info.AddressLine1,
+        info.Town,
+        info.StateOrProvince,
+        info.Country?.Title,
+      ]),
+      lat: info.Latitude || 'N/A',
+      lon: info.Longitude || 'N/A',
       phone: info.ContactTelephone1 || 'N/A',
       website: info.RelatedURL || 'N/A',
-      rating: avgRating,
-      reviews: comments.length || 0,
+      rating:
+        ratings.length > 0
+          ? (ratings.reduce((sum, rating) => sum + rating, 0) / ratings.length).toFixed(1)
+          : 'N/A',
+      reviews: comments.length || 'N/A',
       ports: connections.length || 'N/A',
-      connector_types: connectorTypes || 'N/A',
-      opening_hours: 'N/A',
-      category: '⚡ EV Charging Stations',
-      source: 'OpenChargeMap'
+      connectors:
+        [...new Set(connections.map((connection) => connection.ConnectionType?.Title).filter(Boolean))]
+          .join(', ') || 'N/A',
+      hours: 'N/A',
+      category: categoryLabel,
+      source: 'OpenChargeMap',
     };
   });
 }
