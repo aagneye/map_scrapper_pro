@@ -28,5 +28,30 @@ export function parseOSMResults(elements, categoryLabel) {
 }
 
 export function parseOCMResults(items) {
-  // TODO: implement
+  return items.map(item => {
+    const info = item.AddressInfo || {};
+    const comments = Array.isArray(item.UserComments) ? item.UserComments : [];
+    const connections = Array.isArray(item.Connections) ? item.Connections : [];
+    const addressParts = [
+      info.AddressLine1,
+      info.Town,
+      info.StateOrProvince,
+      info.Country?.Title
+    ].filter(Boolean);
+    return {
+      name: info.Title || 'Unnamed',
+      address: addressParts.join(', '),
+      lat: info.Latitude || '',
+      lon: info.Longitude || '',
+      phone: info.ContactTelephone1 || 'N/A',
+      website: info.RelatedURL || 'N/A',
+      rating: 'N/A',
+      reviews: comments.length || 0,
+      ports: connections.length || 'N/A',
+      connector_types: 'N/A',
+      opening_hours: 'N/A',
+      category: '⚡ EV Charging Stations',
+      source: 'OpenChargeMap'
+    };
+  });
 }
