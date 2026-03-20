@@ -16,6 +16,12 @@ export const CATEGORIES = [
     osmTag: "amenity",
     osmValue: "cafe",
     useOCM: false
+  },
+  {
+    label: "🏨 Hotels",
+    osmTag: "tourism",
+    osmValue: "hotel",
+    useOCM: false
   }
 ];
 
