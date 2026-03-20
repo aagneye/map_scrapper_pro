@@ -6,4 +6,13 @@ export async function geocodeCity(cityName) {
     headers: { 'Accept-Language': 'en' }
   });
   const data = await response.json();
+  if (!Array.isArray(data) || data.length === 0) {
+    throw new Error('City not found. Try a different name.');
+  }
+  const first = data[0];
+  return {
+    lat: parseFloat(first.lat),
+    lon: parseFloat(first.lon),
+    displayName: first.display_name
+  };
 }
