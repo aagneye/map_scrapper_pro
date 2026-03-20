@@ -1,74 +1,73 @@
-// Exporter utilities for PlaceMapper Pro
-
 import * as XLSX from 'xlsx';
 
-export function exportToExcel(data, cityName, categoryLabel) {
-  const headers = [
-    "#", "Name", "Address", "Latitude", "Longitude", "Phone", "Website",
-    "Rating", "Reviews", "Ports", "Connector Types", "Opening Hours", "Category", "Source"
-  ];
+const HEADERS = [
+  '#',
+  'Name',
+  'Address',
+  'Latitude',
+  'Longitude',
+  'Phone',
+  'Website',
+  'Rating',
+  'Reviews',
+  'Ports',
+  'Connectors',
+  'Hours',
+  'Category',
+  'Source',
+];
+
+function sanitize(value) {
+  return String(value || 'N/A').replace(/[^a-zA-Z0-9]+/g, '_').replace(/^_+|_+$/g, '');
+}
 
 export function exportToExcel(data, cityName, categoryLabel) {
-  const headers = [
-    "#", "Name", "Address", "Latitude", "Longitude", "Phone", "Website",
-    "Rating", "Reviews", "Ports", "Connector Types", "Opening Hours", "Category", "Source"
-  ];
-
   const rows = data.map((item, index) => [
     index + 1,
-    item.name,
-    item.address,
-    item.lat,
-    item.lon,
-    item.phone,
-    item.website,
-    item.rating,
-    item.reviews,
-    item.ports,
-    item.connector_types,
-    item.opening_hours,
-    item.category,
-    item.source
+    item.name || 'N/A',
+    item.address || 'N/A',
+    item.lat || 'N/A',
+    item.lon || 'N/A',
+    item.phone || 'N/A',
+    item.website || 'N/A',
+    item.rating || 'N/A',
+    item.reviews || 'N/A',
+    item.ports || 'N/A',
+    item.connectors || 'N/A',
+    item.hours || 'N/A',
+    item.category || categoryLabel,
+    item.source || 'N/A',
   ]);
 
-  const wsData = [headers, ...rows];
-  const ws = XLSX.utils.aoa_to_sheet(wsData);
+  const worksheet = XLSX.utils.aoa_to_sheet([HEADERS, ...rows]);
 
-  // Style header row
-  headers.forEach((_, colIndex) => {
-    const cellAddress = XLSX.utils.encode_cell({ r: 0, c: colIndex });
-    if (!ws[cellAddress]) ws[cellAddress] = {};
-    ws[cellAddress].s = {
+  HEADERS.forEach((_, colIndex) => {
+    const address = XLSX.utils.encode_cell({ r: 0, c: colIndex });
+    worksheet[address] = worksheet[address] || {};
+    worksheet[address].s = {
       font: { bold: true, color: { rgb: 'FFFFFF' } },
-      fill: { patternType: 'solid', fgColor: { rgb: '1E3A5F' } },
-      alignment: { horizontal: 'center' }
+      fill: { patternType: 'solid', fgColor: { rgb: '0F172A' } },
+      alignment: { horizontal: 'center' },
     };
   });
 
-  // Auto column widths
-  const colWidths = headers.map((_, colIndex) => {
-    let maxLen = headers[colIndex].length;
-    rows.forEach(row => {
-      const cellValue = String(row[colIndex] || '');
-      if (cellValue.length > maxLen) maxLen = cellValue.length;
-    });
-    return { wch: maxLen + 4 };
+  worksheet['!cols'] = HEADERS.map((header, colIndex) => {
+    const maxLength = rows.reduce((longest, row) => {
+      return Math.max(longest, String(row[colIndex] || '').length);
+    }, header.length);
+
+    return { wch: Math.min(maxLength + 4, 42) };
   });
-  ws['!cols'] = colWidths;
 
-  // Freeze top row
-  ws['!freeze'] = { xSplit: 0, ySplit: 1 };
+  worksheet['!freeze'] = { xSplit: 0, ySplit: 1 };
 
-  // Create workbook
-  const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, 'PlaceMapper Data');
+  const workbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(workbook, worksheet, 'PlaceMapper Data');
 
-  // Generate filename
-  const dateStr = new Date().toISOString().split('T')[0];
-  const sanitizedCity = cityName.replace(/[^a-zA-Z0-9]/g, '_');
-  const sanitizedCategory = categoryLabel.replace(/[^a-zA-Z0-9]/g, '_');
-  const filename = `${sanitizedCity}_${sanitizedCategory}_${dateStr}.xlsx`;
+  const dateStamp = new Date().toISOString().split('T')[0];
+  const safeCity = sanitize(cityName);
+  const safeCategory = sanitize(categoryLabel);
+  const filename = `${safeCity || 'city'}_${safeCategory || 'category'}_${dateStamp}.xlsx`;
 
-  // Trigger download
-  XLSX.writeFile(wb, filename);
+  XLSX.writeFile(workbook, filename);
 }
