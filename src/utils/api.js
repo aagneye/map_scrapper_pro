@@ -16,3 +16,7 @@ export async function geocodeCity(cityName) {
     displayName: first.display_name
   };
 }
+
+export function fetchOSMPlaces(lat, lon, radius, osmTag, osmValue) {
+  // TODO: implement
+}
