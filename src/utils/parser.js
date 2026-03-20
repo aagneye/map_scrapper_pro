@@ -38,6 +38,8 @@ export function parseOCMResults(items) {
       info.StateOrProvince,
       info.Country?.Title
     ].filter(Boolean);
+    const ratings = comments.map(c => Number(c.Rating || 0)).filter(r => r > 0);
+    const avgRating = ratings.length > 0 ? (ratings.reduce((a, b) => a + b, 0) / ratings.length).toFixed(1) : 'N/A';
     return {
       name: info.Title || 'Unnamed',
       address: addressParts.join(', '),
@@ -45,7 +47,7 @@ export function parseOCMResults(items) {
       lon: info.Longitude || '',
       phone: info.ContactTelephone1 || 'N/A',
       website: info.RelatedURL || 'N/A',
-      rating: 'N/A',
+      rating: avgRating,
       reviews: comments.length || 0,
       ports: connections.length || 'N/A',
       connector_types: 'N/A',
