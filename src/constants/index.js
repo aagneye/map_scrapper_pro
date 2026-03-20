@@ -40,6 +40,12 @@ export const CATEGORIES = [
     osmTag: "amenity",
     osmValue: "bank",
     useOCM: false
+  },
+  {
+    label: "🛒 Supermarkets",
+    osmTag: "shop",
+    osmValue: "supermarket",
+    useOCM: false
   }
 ];
 
