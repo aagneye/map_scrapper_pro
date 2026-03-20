@@ -26,3 +26,7 @@ export function parseOSMResults(elements, categoryLabel) {
     };
   });
 }
+
+export function parseOCMResults(items) {
+  // TODO: implement
+}
