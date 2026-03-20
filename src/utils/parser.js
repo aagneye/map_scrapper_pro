@@ -40,6 +40,7 @@ export function parseOCMResults(items) {
     ].filter(Boolean);
     const ratings = comments.map(c => Number(c.Rating || 0)).filter(r => r > 0);
     const avgRating = ratings.length > 0 ? (ratings.reduce((a, b) => a + b, 0) / ratings.length).toFixed(1) : 'N/A';
+    const connectorTypes = [...new Set(connections.map(c => c.ConnectionType?.Title).filter(Boolean))].join(', ');
     return {
       name: info.Title || 'Unnamed',
       address: addressParts.join(', '),
@@ -50,7 +51,7 @@ export function parseOCMResults(items) {
       rating: avgRating,
       reviews: comments.length || 0,
       ports: connections.length || 'N/A',
-      connector_types: 'N/A',
+      connector_types: connectorTypes || 'N/A',
       opening_hours: 'N/A',
       category: '⚡ EV Charging Stations',
       source: 'OpenChargeMap'
