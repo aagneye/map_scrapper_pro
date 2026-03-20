@@ -31,3 +31,7 @@ export async function fetchOSMPlaces(lat, lon, radius, osmTag, osmValue) {
   const data = await response.json();
   return data.elements || [];
 }
+
+export function fetchOCMPlaces(lat, lon, radiusMeters) {
+  // TODO: implement
+}
