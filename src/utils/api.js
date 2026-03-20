@@ -10,6 +10,12 @@ export function geocodeCity(cityName) {
 }
 
 export function fetchOSMPlaces(lat, lon, radius, osmTag, osmValue) {
+  const query = `[out:json][timeout:60]; ( node["${osmTag}"="${osmValue}"](around:${radius},${lat},${lon}); way["${osmTag}"="${osmValue}"](around:${radius},${lat},${lon}); ); out center tags;`;
+  const response = fetch('https://overpass-api.de/api/interpreter', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' },
+    body: `data=${encodeURIComponent(query)}`
+  });
   // TODO
 }
 
