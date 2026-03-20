@@ -21,5 +21,8 @@ export function fetchOSMPlaces(lat, lon, radius, osmTag, osmValue) {
 }
 
 export function fetchOCMPlaces(lat, lon, radiusMeters) {
+  const km = radiusMeters / 1000;
+  const url = `https://api.openchargemap.io/v3/poi/?output=json&latitude=${lat}&longitude=${lon}&distance=${km}&distanceunit=KM&maxresults=500&compact=true&verbose=false`;
+  const response = fetch(url);
   // TODO
 }
