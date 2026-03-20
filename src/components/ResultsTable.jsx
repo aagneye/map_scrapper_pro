@@ -26,9 +26,9 @@ function sourceBadgeClass(source) {
 export function ResultsTable({ results, categoryLabel }) {
   return (
     <div className="overflow-hidden rounded-[24px] border border-[#1f2937] bg-[#111827]">
-      <div className="max-h-[520px] overflow-auto">
+      <div className="max-h-[520px] overflow-auto overscroll-contain">
         <table className="min-w-full border-separate border-spacing-0 text-sm text-[#cbd5e1]">
-          <thead className="sticky top-0 z-10 bg-[#0d1117]">
+          <thead className="sticky top-0 z-10 bg-[#0d1117] backdrop-blur">
             <tr>
               {columns.map((column) => (
                 <th
@@ -55,8 +55,12 @@ export function ResultsTable({ results, categoryLabel }) {
                 <td className="max-w-[200px] overflow-hidden text-ellipsis whitespace-nowrap border-b border-[#1f2937] px-4 py-3 align-top">
                   {result.address || 'N/A'}
                 </td>
-                <td className="border-b border-[#1f2937] px-4 py-3 align-top">{result.lat || 'N/A'}</td>
-                <td className="border-b border-[#1f2937] px-4 py-3 align-top">{result.lon || 'N/A'}</td>
+                <td className="border-b border-[#1f2937] px-4 py-3 align-top font-medium text-[#93c5fd]">
+                  {result.lat || 'N/A'}
+                </td>
+                <td className="border-b border-[#1f2937] px-4 py-3 align-top font-medium text-[#93c5fd]">
+                  {result.lon || 'N/A'}
+                </td>
                 <td className="border-b border-[#1f2937] px-4 py-3 align-top">{result.phone || 'N/A'}</td>
                 <td className="border-b border-[#1f2937] px-4 py-3 align-top">
                   {result.website && result.website !== 'N/A' ? (
