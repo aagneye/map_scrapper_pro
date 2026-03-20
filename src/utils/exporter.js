@@ -55,4 +55,20 @@ export function exportToExcel(data, cityName, categoryLabel) {
     return { wch: maxLen + 4 };
   });
   ws['!cols'] = colWidths;
+
+  // Freeze top row
+  ws['!freeze'] = { xSplit: 0, ySplit: 1 };
+
+  // Create workbook
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'PlaceMapper Data');
+
+  // Generate filename
+  const dateStr = new Date().toISOString().split('T')[0];
+  const sanitizedCity = cityName.replace(/[^a-zA-Z0-9]/g, '_');
+  const sanitizedCategory = categoryLabel.replace(/[^a-zA-Z0-9]/g, '_');
+  const filename = `${sanitizedCity}_${sanitizedCategory}_${dateStr}.xlsx`;
+
+  // Trigger download
+  XLSX.writeFile(wb, filename);
 }
