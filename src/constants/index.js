@@ -46,7 +46,19 @@ export const CATEGORIES = [
     osmTag: "shop",
     osmValue: "supermarket",
     useOCM: false
+  },
+  {
+    label: "💊 Pharmacies",
+    osmTag: "amenity",
+    osmValue: "pharmacy",
+    useOCM: false
+  },
+  {
+    label: "🎓 Schools",
+    osmTag: "amenity",
+    osmValue: "school",
+    useOCM: false
   }
 ];
 
-export const RADIUS_OPTIONS = [];
+export const RADIUS_OPTIONS = [1000, 2000, 5000, 10000, 20000, 50000];
