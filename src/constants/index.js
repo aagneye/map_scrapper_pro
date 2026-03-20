@@ -34,6 +34,12 @@ export const CATEGORIES = [
     osmTag: "amenity",
     osmValue: "fuel",
     useOCM: false
+  },
+  {
+    label: "🏦 Banks",
+    osmTag: "amenity",
+    osmValue: "bank",
+    useOCM: false
   }
 ];
 
