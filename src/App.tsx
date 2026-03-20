@@ -22,12 +22,11 @@ function App() {
     statusMessage,
     errorMessage,
     searchDone,
-    cityInfo,
     handleSearch,
   } = useSearch();
 
   const selectedCategoryLabel = CATEGORIES[selectedCategory]?.label || 'Places';
-  const displayCity = cityInfo?.displayName || city || 'Unknown city';
+  const displayCity = city || 'Unknown city';
 
   return (
     <div className="app-shell">
@@ -55,14 +54,9 @@ function App() {
                 <ExportBar
                   results={results}
                   city={displayCity}
-                  categoryLabel={selectedCategoryLabel}
                   onExport={() => exportToExcel(results, displayCity, selectedCategoryLabel)}
                 />
-                <ResultsTable
-                  results={results}
-                  city={displayCity}
-                  categoryLabel={selectedCategoryLabel}
-                />
+                <ResultsTable results={results} categoryLabel={selectedCategoryLabel} />
               </div>
             ) : (
               <EmptyState searchDone={searchDone} />
