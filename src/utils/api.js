@@ -18,5 +18,8 @@ export async function geocodeCity(cityName) {
 }
 
 export function fetchOSMPlaces(lat, lon, radius, osmTag, osmValue) {
-  // TODO: implement
+  const url = 'https://overpass-api.de/api/interpreter';
+  const response = fetch(url, {
+    method: 'POST'
+  });
 }
