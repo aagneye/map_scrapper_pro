@@ -8,6 +8,12 @@ export function exportToExcel(data, cityName, categoryLabel) {
     "Rating", "Reviews", "Ports", "Connector Types", "Opening Hours", "Category", "Source"
   ];
 
+export function exportToExcel(data, cityName, categoryLabel) {
+  const headers = [
+    "#", "Name", "Address", "Latitude", "Longitude", "Phone", "Website",
+    "Rating", "Reviews", "Ports", "Connector Types", "Opening Hours", "Category", "Source"
+  ];
+
   const rows = data.map((item, index) => [
     index + 1,
     item.name,
@@ -24,4 +30,7 @@ export function exportToExcel(data, cityName, categoryLabel) {
     item.category,
     item.source
   ]);
+
+  const wsData = [headers, ...rows];
+  const ws = XLSX.utils.aoa_to_sheet(wsData);
 }
