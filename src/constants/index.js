@@ -28,6 +28,12 @@ export const CATEGORIES = [
     osmTag: "amenity",
     osmValue: "hospital",
     useOCM: false
+  },
+  {
+    label: "⛽ Petrol Stations",
+    osmTag: "amenity",
+    osmValue: "fuel",
+    useOCM: false
   }
 ];
 
