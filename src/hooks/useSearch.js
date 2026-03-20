@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { geocodeCity, fetchOSMPlaces, fetchOCMPlaces } from '../utils/api.js';
-import { parseOSMResults, parseOCMResults } from '../utils/parser.js';
+import { fetchOCMPlaces, fetchOSMPlaces, geocodeCity } from '../utils/api.js';
+import { parseOCMResults, parseOSMResults } from '../utils/parser.js';
 import { CATEGORIES } from '../constants/index.js';
 
 export function useSearch() {
@@ -15,13 +15,15 @@ export function useSearch() {
   const [cityInfo, setCityInfo] = useState(null);
 
   const handleSearch = async () => {
-    // Validate city not empty
     if (!city.trim()) {
       setErrorMessage('Please enter a city name.');
+      setStatusMessage('');
+      setSearchDone(false);
       return;
     }
 
-    // Clear previous state
+    const category = CATEGORIES[selectedCategory];
+
     setLoading(true);
     setErrorMessage('');
     setResults([]);
@@ -29,39 +31,46 @@ export function useSearch() {
     setStatusMessage('📍 Locating city...');
 
     try {
-      // Geocode city
-      const info = await geocodeCity(city);
+      const info = await geocodeCity(city.trim());
       setCityInfo(info);
 
-      const category = CATEGORIES[selectedCategory];
-      let allResults = [];
+      let nextResults = [];
 
       if (category.useOCM) {
-        // Fetch from OCM
-        setStatusMessage('⚡ Fetching from OpenChargeMap...');
+        setStatusMessage('⚡ Fetching OpenChargeMap results...');
         const ocmData = await fetchOCMPlaces(info.lat, info.lon, radius);
-        const ocmResults = parseOCMResults(ocmData);
+        const ocmResults = parseOCMResults(ocmData, category.label);
 
-        // Also fetch from OSM
-        setStatusMessage('🗺️ Also fetching from OpenStreetMap...');
-        const osmData = await fetchOSMPlaces(category.tags, info.lat, info.lon, radius);
-        const osmResults = parseOSMResults(osmData);
+        setStatusMessage('🗺️ Fetching OpenStreetMap results...');
+        const osmData = await fetchOSMPlaces(
+          category.osmTag,
+          category.osmValue,
+          info.lat,
+          info.lon,
+          radius,
+        );
+        const osmResults = parseOSMResults(osmData, category.label);
 
-        // Merge
-        allResults = [...osmResults, ...ocmResults];
+        nextResults = [...osmResults, ...ocmResults];
       } else {
-        // Fetch from OSM only
-        setStatusMessage('🗺️ Fetching from OpenStreetMap...');
-        const osmData = await fetchOSMPlaces(category.tags, info.lat, info.lon, radius);
-        allResults = parseOSMResults(osmData);
+        setStatusMessage('🗺️ Fetching OpenStreetMap results...');
+        const osmData = await fetchOSMPlaces(
+          category.osmTag,
+          category.osmValue,
+          info.lat,
+          info.lon,
+          radius,
+        );
+        nextResults = parseOSMResults(osmData, category.label);
       }
 
-      // Set results
-      setResults(allResults);
+      setResults(nextResults);
       setSearchDone(true);
-      setStatusMessage(`✅ Found ${allResults.length} results in ${city}`);
-    } catch (e) {
-      setErrorMessage(e.message);
+      setStatusMessage(`✅ Found ${nextResults.length} results in ${info.displayName}`);
+    } catch (error) {
+      setStatusMessage('');
+      setErrorMessage(error instanceof Error ? error.message : 'Search failed. Please try again.');
+      setSearchDone(true);
     } finally {
       setLoading(false);
     }
